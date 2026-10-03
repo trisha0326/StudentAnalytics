@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — EduMetrics</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+<header class="navbar">
+  <div class="container nav-inner">
+    <a class="brand" href="/"><span class="brand-mark">E</span><span>EduMetrics<small>Student Performance Analytics</small></span></a>
+    <nav class="nav-links">
+      <a href="/">HOME</a><a href="/dashboard" class="active">ANALYTICS</a>
+      <a href="/upload">UPLOAD DATA</a><a href="/about">ABOUT</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="/upload">+ New Upload</a>
+  </div>
+</header>
+
+<div class="container">
+  <div class="toolbar">
+    <div><h2 style="text-align:left;margin:0">Analytics Dashboard</h2>
+      <span class="badge" id="fname">{{ filename or '' }}</span></div>
+    <a class="btn btn-accent btn-sm" href="/download-report">⬇ Download Analysis Report</a>
+  </div>
+  <div id="loading">⏳ Loading dashboard…</div>
+  <div id="dash" style="display:none">
+
+    <div class="kpis" id="kpis"></div>
+
+    <div class="dash-sec" id="secQuality">
+      <h3>🛡 Data Quality</h3>
+      <p class="why">What the cleaner found — rows are never blindly deleted.</p>
+      <div class="chart-grid"><div><table class="clean" id="qtable"></table></div>
+      <div><table class="clean" id="qcols"></table></div></div>
+    </div>
+
+    <div class="dash-sec" id="secPerf">
+      <h3>📈 Performance Overview</h3>
+      <p class="why" id="perfStats"></p>
+      <div class="chart-grid">
+        <div><h4>Score distribution</h4><div class="chart" id="cScore"></div></div>
+        <div><h4>Grade distribution</h4><div class="chart" id="cGrade"></div></div>
+      </div>
+      <div id="subjWrap"><h4>Average score by subject</h4><div class="chart" id="cSubj"></div></div>
+    </div>
+
+    <div class="dash-sec" id="secAtt">
+      <h3>🗓 Attendance Analysis</h3>
+      <p class="why" id="attStats"></p>
+      <div class="chart-grid">
+        <div><h4>Attendance distribution</h4><div class="chart" id="cAtt"></div></div>
+        <div><h4>Students per attendance band</h4><div class="chart" id="cAttBand"></div></div>
+      </div>
+      <div class="chart-grid" style="margin-top:20px">
+        <div><h4>Attendance vs score <span class="badge" id="rAtt"></span></h4><div class="chart" id="cAttScore"></div>
+          <p class="why">A positive correlation means higher attendance coincides with higher scores here — it does <b>not</b> prove attendance causes better marks.</p></div>
+        <div><h4>Mean score by attendance band</h4><div class="chart" id="cAttMean"></div></div>
+      </div>
+    </div>
+
+    <div class="dash-sec" id="secStudy">
+      <h3>📚 Study Habits</h3>
+      <div class="chart-grid">
+        <div><h4>Study hours vs score <span class="badge" id="rStu"></span></h4><div class="chart" id="cStuScore"></div></div>
+        <div><h4>Study-hours distribution</h4><div class="chart" id="cStu"></div></div>
+      </div>
+    </div>
+
+    <div class="dash-sec" id="secGroups">
+      <h3>👥 Group Comparisons</h3>
+      <div class="chart-grid">
+        <div id="gWrap"><h4>Score by gender</h4><div class="chart" id="cGender"></div></div>
+        <div id="pWrap"><h4>Score by test preparation</h4><div class="chart" id="cPrep"></div></div>
+      </div>
+      <div id="parWrap"><h4>Score by parental education</h4><div class="chart" id="cPar"></div></div>
+      <div id="heatWrap"><h4>Correlation heatmap</h4><div class="chart" id="cHeat"></div></div>
+    </div>
+
+    <div class="dash-sec" id="secSeg">
+      <h3>🎯 Student Segmentation</h3>
+      <p class="why" id="segCrit"></p>
+      <table class="clean" id="segTable"></table>
+      <div class="chart-grid" style="margin-top:20px">
+        <div><h4>Segments in attendance × score space</h4><div class="chart" id="cSeg"></div></div>
+        <div><h4>Score spread per segment</h4><div class="chart" id="cSegBox"></div></div>
+      </div>
+    </div>
+
+    <div class="dash-sec">
+      <h3>💡 Key Insights <span class="badge">auto-generated from your data</span></h3>
+      <ol class="insight-list" id="ins"></ol>
+    </div>
+    <div class="dash-sec">
+      <h3>✅ Recommendations</h3>
+      <ol class="rec-list" id="rec"></ol>
+    </div>
+  </div>
+</div>
+<footer><div class="container"><b>EduMetrics</b> · Correlation ≠ causation · Thresholds shown under Segmentation</div></footer>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

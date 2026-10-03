@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EduMetrics — Student Performance Analytics</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="navbar">
+  <div class="container nav-inner">
+    <a class="brand" href="/"><span class="brand-mark">E</span><span>EduMetrics<small>Student Performance Analytics</small></span></a>
+    <nav class="nav-links">
+      <a href="/" class="active">HOME</a>
+      <a href="/dashboard">ANALYTICS</a>
+      <a href="/upload">UPLOAD DATA</a>
+      <a href="/about">ABOUT</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="/upload">Get Started</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">For Colleges &amp; Educators</span>
+      <h1>Turn Student Data Into <span>Better Academic Insights</span></h1>
+      <p class="lead">Analyze attendance, academic performance, study habits, and student trends using your CSV data.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="/upload">Upload CSV</a>
+        <button class="btn btn-outline" id="demoBtn" type="button">View Demo</button>
+      </div>
+      <div class="hero-stats">
+        <div><b>CSV →</b><span>runtime upload</span></div>
+        <div><b>10+</b><span>dynamic charts</span></div>
+        <div><b>Auto</b><span>insights &amp; report</span></div>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <b><span class="dot-red"></span>Live classroom snapshot</b>
+      <div class="bar" style="width:92%;background:#1d4ed8"></div>
+      <div class="bar" style="width:74%;background:#60a5fa"></div>
+      <div class="bar" style="width:58%;background:#e11d48"></div>
+      <div class="bar" style="width:81%;background:#34d399"></div>
+      <div class="bar" style="width:66%;background:#fbbf24"></div>
+      <div class="hero-note">Attendance vs score · study habits · subject averages — generated from <i>your</i> uploaded CSV after you click Upload.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2>Everything a coordinator needs</h2>
+    <p class="sub">Upload a file, get a full analytics dashboard — no code, no setup per dataset.</p>
+    <div class="grid-3">
+      <div class="card"><div class="icon blue">📤</div><h3>Smart CSV upload</h3><p>Drag &amp; drop any student CSV. Columns are detected intelligently — Attendance %, study hours, marks, gender, test prep.</p></div>
+      <div class="card"><div class="icon red">📊</div><h3>Interactive dashboard</h3><p>KPIs, distributions, attendance-vs-score scatter, subject bars, correlation heatmap — only for data you actually have.</p></div>
+      <div class="card"><div class="icon green">💡</div><h3>Insights + report</h3><p>Auto-written findings with real numbers, practical recommendations, and a one-click HTML report download.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <h2>How it works</h2>
+    <p class="sub">Four steps from raw file to decisions.</p>
+    <div class="grid-3 steps">
+      <div class="card step"><h3>1 · Upload</h3><p>Drop your CSV on the Upload page. It is validated in the browser and on the server.</p></div>
+      <div class="card step"><h3>2 · Auto-clean</h3><p>Python removes duplicates, handles missing values, flags invalid entries and shows a data-quality summary.</p></div>
+      <div class="card step"><h3>3 · Explore</h3><p>The dashboard builds KPIs and Plotly charts dynamically from whatever columns were detected.</p></div>
+    </div>
+    <div style="text-align:center;margin-top:28px">
+      <a class="btn btn-accent" href="/upload">Start Analyzing — Upload CSV</a>
+    </div>
+  </div>
+</section>
+
+<footer><div class="container"><b>EduMetrics</b> · Student Performance Analytics · Built with Flask, Pandas &amp; Plotly · Correlation ≠ causation</div></footer>
+<script>
+document.getElementById('demoBtn').addEventListener('click', async (e) => {
+  const b = e.currentTarget; b.disabled = true; b.textContent = 'Loading demo…';
+  const r = await fetch('/api/demo', {method: 'POST'});
+  const j = await r.json();
+  if (j.ok) window.location.href = j.redirect;
+  else { b.disabled = false; b.textContent = 'View Demo'; alert(j.error || 'Demo failed'); }
+});
+</script>
+</body>
+</html>

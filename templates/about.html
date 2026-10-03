@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About — EduMetrics</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="navbar">
+  <div class="container nav-inner">
+    <a class="brand" href="/"><span class="brand-mark">E</span><span>EduMetrics<small>Student Performance Analytics</small></span></a>
+    <nav class="nav-links">
+      <a href="/">HOME</a><a href="/dashboard">ANALYTICS</a>
+      <a href="/upload">UPLOAD DATA</a><a href="/about" class="active">ABOUT</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="/upload">Get Started</a>
+  </div>
+</header>
+<section class="section"><div class="container" style="max-width:800px">
+  <h2>About this project</h2>
+  <p class="sub">A real-world data analytics web app for colleges.</p>
+  <div class="card">
+    <h3>What it does</h3>
+    <p>CSV upload at runtime → Pandas validation &amp; cleaning → descriptive analytics → interactive Plotly dashboard → auto-generated insights → downloadable HTML report. No dataset is hardcoded; every chart hides gracefully when its columns are absent, and insights are always computed from the uploaded file — never fabricated.</p>
+  </div><br>
+  <div class="grid-2">
+    <div class="card"><h3>Tech stack</h3><p>Python · Flask · Pandas · NumPy · Plotly · HTML · CSS · Vanilla JavaScript. Deliberately beginner-friendly: Flask serves pages + JSON, JS renders charts, analysis lives in <code>analysis/</code>.</p></div>
+    <div class="card"><h3>Column intelligence</h3><p>Case-insensitive matching, e.g. <code>attendance %</code>, <code>attendance_percentage</code> → attendance; <code>marks</code>, <code>total marks</code>, <code>final score</code> → score. Subjects detected by keyword. Missing concept ⇒ section hidden.</p></div>
+  </div><br>
+  <div class="card">
+    <h3>Explain it in an interview (60 seconds)</h3>
+    <p>"Users upload any student CSV. I normalise headers and map variations to canonical fields, clean with median/mode imputation and duplicate removal, compute KPIs, correlations and segments in Pandas, expose them as JSON from Flask, and render responsive Plotly charts. Insights and recommendations are generated from the computed statistics, and the report endpoint exports them as HTML."</p>
+    <p style="margin-top:12px"><a class="btn btn-primary btn-sm" href="/upload">Try it now</a></p>
+  </div>
+</div></section>
+<footer><div class="container"><b>EduMetrics</b> · Flask + Pandas + Plotly</div></footer>
+</body>
+</html>

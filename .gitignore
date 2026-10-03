@@ -1,0 +1,8 @@
+__pycache__/
+.ipynb_checkpoints/
+.visuals/
+*.pyc
+.venv/
+venv/
+uploads/*.csv
+reports/*.html

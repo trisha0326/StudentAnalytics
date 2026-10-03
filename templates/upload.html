@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upload — EduMetrics</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="navbar">
+  <div class="container nav-inner">
+    <a class="brand" href="/"><span class="brand-mark">E</span><span>EduMetrics<small>Student Performance Analytics</small></span></a>
+    <nav class="nav-links">
+      <a href="/">HOME</a><a href="/dashboard">ANALYTICS</a>
+      <a href="/upload" class="active">UPLOAD DATA</a><a href="/about">ABOUT</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="/dashboard">Dashboard</a>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container" style="max-width:720px">
+    <h2>Upload Student Dataset</h2>
+    <p class="sub">Upload a CSV file containing student academic and attendance data.</p>
+    <div class="card">
+      <div class="dropzone" id="drop">
+        <div class="big">📁</div>
+        <h3>Drag &amp; drop your CSV here</h3>
+        <p>or</p>
+        <button class="btn btn-primary" id="browse" type="button">Browse Files</button>
+        <input type="file" id="file" accept=".csv" hidden>
+        <div class="file-pill" id="pill"></div>
+      </div>
+      <div class="alert ok" id="ok"></div>
+      <div class="alert err" id="err"></div>
+      <div class="spinner" id="spin">⏳ Processing… cleaning, analyzing, building dashboard…</div>
+      <div style="display:flex;gap:12px;margin-top:18px;flex-wrap:wrap">
+        <button class="btn btn-accent" id="send" type="button" disabled>Upload &amp; Analyze</button>
+        <button class="btn btn-outline" id="demo" type="button">Try Demo Data Instead</button>
+      </div>
+      <p style="font-size:13px;color:#6b7280">Supported: Attendance, Study Hours, Previous Score, Math / Science / English / Computer Science, Final Score, Grade, Gender, Test Preparation, Parental Education — under many common column names. Max 16 MB.</p>
+    </div>
+  </div>
+</section>
+<footer><div class="container"><b>EduMetrics</b> · Your file is processed in memory for analytics only.</div></footer>
+<script>
+const drop = document.getElementById('drop'), inp = document.getElementById('file'),
+      pill = document.getElementById('pill'), send = document.getElementById('send'),
+      ok = document.getElementById('ok'), err = document.getElementById('err'),
+      spin = document.getElementById('spin');
+let picked = null;
+function showFile(f){ picked = f; pill.style.display='inline-block';
+  pill.textContent = '📄 ' + f.name + ' (' + (f.size/1024).toFixed(1) + ' KB)';
+  send.disabled = false; ok.className='alert'; err.className='alert'; }
+document.getElementById('browse').onclick = () => inp.click();
+inp.onchange = e => { if (e.target.files[0]) {
+  if (!e.target.files[0].name.toLowerCase().endsWith('.csv')) { err.className='alert err'; err.textContent='Please upload a valid CSV file.'; return; }
+  showFile(e.target.files[0]); } };
+['dragover','dragenter'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('drag'); }));
+drop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (!f) return;
+  if (!f.name.toLowerCase().endsWith('.csv')) { err.className='alert err'; err.textContent='Please upload a valid CSV file.'; return; }
+  showFile(f); });
+send.onclick = async () => {
+  if (!picked) return;
+  send.disabled = true; spin.style.display='block'; err.className='alert'; ok.className='alert';
+  const fd = new FormData(); fd.append('file', picked);
+  try {
+    const r = await fetch('/api/upload', {method:'POST', body: fd});
+    const j = await r.json();
+    if (j.ok) { ok.className='alert ok';
+      ok.innerHTML = `✓ File uploaded successfully &nbsp;·&nbsp; ${j.rows} rows × ${j.columns} columns — opening dashboard…`;
+      setTimeout(() => window.location.href = j.redirect, 900); }
+    else { err.className='alert err'; err.textContent = j.error || 'Please upload a valid CSV file.';
+      send.disabled = false; spin.style.display='none'; }
+  } catch { err.className='alert err'; err.textContent='Network error. Is the Flask server running?';
+    send.disabled = false; spin.style.display='none'; }
+};
+document.getElementById('demo').onclick = async (e) => {
+  const b = e.currentTarget; b.disabled = true; spin.style.display='block';
+  const r = await fetch('/api/demo', {method:'POST'}); const j = await r.json();
+  if (j.ok) window.location.href = j.redirect;
+  else { err.className='alert err'; err.textContent = j.error || 'Demo failed';
+    b.disabled = false; spin.style.display='none'; }
+};
+</script>
+</body>
+</html>
